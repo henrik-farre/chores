@@ -12,7 +12,7 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = 'Peen8ra$ ZePair7'
-    app.config['DATABASE'] = 'chores.db'
+    app.config['DATABASE'] = '/data/chores.db'
 
     locale.setlocale(locale.LC_TIME, 'da_DK.UTF-8')
 
