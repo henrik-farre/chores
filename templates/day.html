@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block navigation %}
+  <div class="left-button">
+    <a href="{{ url_for('week_view', week_number=week_number) }}">Denne uge 📆</a>
+    {{ session.username }} <a href="{{ url_for('logout') }}">Log ud</a>
+  </div>
+  <div class="right-buttons">
+    <a href="/day">&lt;</a>
+    <a href="/day">I dag</a>
+    <a href="/day">&gt;</a>
+  </div>
+{% endblock %}
+
+{% block content %}
+<!-- day.html -->
+    <h1>{{ current_date.strftime('%A d. %d %B')| capitalize }} (Uge {{ week_number }})</h1>
+
+    <div class="container">
+    {% if not paid_week %}
+        <form action="{{ url_for('chore_complete') }}" method="POST">
+            <input type="hidden" value="{{ current_date.strftime('%Y-%m-%d') }}" name="current_date">
+            <div class="form-group">
+                <label for="chore_id">Opgaver:</label>
+                <select id="chore_id" name="chore_id" required>
+                    {% for chore in chores %}
+                      <option value="{{ chore.id }}">{{ chore.name }}: {{ chore.price }} DKK{% if chore.bonus_price %} (+{{ chore.bonus_price }} før {{ chore.bonus_price_trigger }}){% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Gem opgave">
+            </div>
+        </form>
+
+        <div class="chores-list">
+            {% for chore in completed_chores %}
+                <div class="chore-item">
+                    <div class="chore-info">
+                        <div class="chore-name">{{ chore.name }} - {{ chore.user_name }}</div>
+                        <div class="chore-price">Tjent: {{ chore.price }} DKK</div>
+                    </div>
+                    {% if session.is_admin == 1 or chore.user_id == session.user_id %}
+                    <div class="chore-actions">
+                      <button class="delete-button" data-chore-id="{{ chore.id }}">Slet</button>
+                    </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+      Lommepenge for ugen er udbetalt
+    {% endif %}
+    </div>
+
+    <script>
+    // Get all the delete buttons
+    const deleteButtons = document.querySelectorAll('.delete-button');
+
+    // Attach click event listener to each delete button
+    deleteButtons.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        // Get the chore_id from the data attribute of the clicked button
+        const choreId = button.dataset.choreId;
+
+        // Send the DELETE request
+        fetch(`/chore/complete/${choreId}`, {
+          method: 'DELETE',
+        })
+        .then((response) => {
+          if (response.ok) {
+            console.log('Chore completed successfully');
+            const choreItem = button.closest('.chore-item');
+            choreItem.remove();
+          } else {
+            console.error('Error completing chore');
+          }
+        })
+        .catch((error) => {
+          console.error('Error completing chore', error);
+          // Handle any network errors or exceptions
+        });
+      });
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block navigation %}
+  <div class="left-button">
+    <a href="/day">I dag</a>
+    {{ session.username }} <a href="{{ url_for('logout') }}">Log ud</a>
+  </div>
+  <div class="right-buttons">
+    <a href="{{ url_for('week_view', week_number=week_number-1) }}">&lt;</a>
+    <a href="{{ url_for('week_view') }}">Denne uge 📆</a>
+    <a href="{{ url_for('week_view', week_number=week_number+1) }}">&gt;</a>
+  </div>
+{% endblock %}
+
+{% block content %}
+    <h1>Uge {{ week_number }}</h1>
+
+    <div class="container">
+    {% if session.is_admin == 1 and not paid_week %}
+      <a class="button mark-as-paid-button" href="#" data-week-number="{{ week_number }}">Marker uge som betalt</a>
+    {% endif %}
+    {% if paid_week %}
+      Lommepenge for ugen er udbetalt
+    {% endif %}
+
+      <table>
+        <tr>
+          <th colspan="2">Totalt</th>
+        </tr>
+        {% for user, total in totals|items %}
+          <tr>
+            <td>{{ user }}</td>
+            <td>{% if user in bonus and bonus[user] %}🥳 BONUS opnået! {{ total*2 }}{% else %}{{ total }}{% endif %} DKK</td>
+          </tr>
+        {% endfor %}
+      </table>
+
+      <h3>Oversigt</h3>
+      <table>
+        {% for date_index, data in weekdays_with_chores.items() %}
+          <tr>
+            <th colspan="3"><a class="button" href="{{ url_for('day_view', selected_date=date_index) }}">{{ data['datetime'].strftime('%A d. %d %B')| capitalize }}</a> </th>
+          </tr>
+          {% if data['chores'] %}
+              {% for chore in data['chores'] %}
+              <tr>
+                <td>{{ chore.chore_name }}</td>
+                <td>{{ chore.user_name }}</td>
+                <td>{{ chore.price }}</td>
+              </tr>
+              {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </table>
+    </div>
+
+    <script>
+      const markButton = document.querySelector('.mark-as-paid-button');
+
+      if (markButton) {
+        markButton.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        const weekNumber = markButton.dataset.weekNumber;
+
+        fetch(`/week/paid/${weekNumber}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ weekNumber: weekNumber })
+        })
+          .then(response => {
+            if (response.ok) {
+              markButton.remove()
+              console.log('Week marked as paid successfully');
+            } else {
+              // Error: Handle the error
+              console.log('Failed to mark week as paid');
+            }
+          })
+          .catch(error => {
+            // Error: Handle the error
+            console.log('An error occurred', error);
+          });
+        });
+      }
+    </script>
+{% endblock %}

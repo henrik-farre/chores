@@ -1,0 +1,17 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Week View</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="top-bar">
+  {% block navigation %}{% endblock %}
+</div>
+
+  {% block content %}{% endblock %}
+</body>
+</html>

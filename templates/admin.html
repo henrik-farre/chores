@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Admin Page</h1>
+
+    <h2>Add User</h2>
+    <form action="{{ url_for('admin') }}" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit" name="add_user">Add User</button>
+    </form>
+
+    <h2>Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>
+                        <form action="{{ url_for('admin') }}" method="POST" style="display: inline-block;">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <button type="submit" name="delete_user">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Add Chore</h2>
+    <form action="{{ url_for('admin') }}" method="POST">
+        <label for="chore_name">Chore Name:</label>
+        <input type="text" id="chore_name" name="chore_name" required>
+        <br>
+        <label for="chore_price">Price:</label>
+        <input type="number" id="chore_price" name="chore_price" step="1" required>
+        <br>
+        <label for="chore_bonus_price">Bonus Price:</label>
+        <input type="number" id="chore_bonus_price" name="chore_bonus_price" step="1">
+        <br>
+        <label for="chore_bonus_price_trigger">Bonus Price trigger:</label>
+        <input type="text" id="chore_bonus_price_trigger" name="chore_bonus_price_trigger">
+        <br>
+        <label for="chore_type">Type:</label>
+        <select id="chore_type" name="chore_type" required>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+        </select>
+        <br>
+        <label for="chore_limit">Limit:</label>
+        <input type="number" id="chore_limit" name="chore_limit">
+        <button type="submit" name="add_chore">Add Chore</button>
+    </form>
+
+    <h2>Chores</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Chore Name</th>
+                <th>Price</th>
+                <th>Bonus Price</th>
+                <th>Bonus Price trigger</th>
+                <th>Type</th>
+                <th>Limit</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for chore in chores %}
+                <tr>
+                    <td>{{ chore.id }}</td>
+                    <td>{{ chore.name }}</td>
+                    <td>{{ chore.price }}</td>
+                    <td>{{ chore.bonus_price }}</td>
+                    <td>{{ chore.bonus_price_trigger }}</td>
+                    <td>{{ chore.type }}</td>
+                    <td>{{ chore.limit }}</td>
+                    <td>
+                        <form action="{{ url_for('admin') }}" method="POST" style="display: inline-block;">
+                            <input type="hidden" name="chore_id" value="{{ chore[0] }}">
+                            <button type="submit" name="delete_chore">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
