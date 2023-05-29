@@ -1,0 +1,10 @@
+.git/
+node_modules/
+dist/
+chore.db
+__pycache__
+README.md
+.flake8
+.vimspector.json
+.venv
+pyrightconfig.json

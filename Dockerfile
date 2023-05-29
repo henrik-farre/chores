@@ -24,5 +24,12 @@ COPY --from=poetry /app /app
 COPY --from=python /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive
 
 RUN adduser --system --no-create-home -u 999 chores
+
+RUN mkdir /data && \
+   chown 999 /data
+
+VOLUME ["/data"]
+
 USER 999
+
 CMD ["flask", "--app", "app", "run", "--host", "0.0.0.0"]
