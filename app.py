@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from functools import wraps
 from utils.helpers import get_weekdays_of_week, get_week_number_from_date
 from utils.db import get_db, init_db
@@ -13,6 +13,7 @@ def create_app():
 
     app.config['SECRET_KEY'] = 'Peen8ra$ ZePair7'
     app.config['DATABASE'] = '/data/chores.db'
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
 
     locale.setlocale(locale.LC_TIME, 'da_DK.UTF-8')
 
@@ -51,6 +52,7 @@ def create_app():
                 session['username'] = user['name']
                 session['user_id'] = user['id']
                 session['is_admin'] = user['is_admin']
+                session.permanent = True
                 return redirect(url_for('day_view'))
 
         return render_template('login.html', error=error)
