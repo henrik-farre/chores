@@ -3,7 +3,7 @@
 {% block navigation %}
   <div class="left-button">
     <a href="{{ url_for('week_view', week_number=week_number) }}">Denne uge 📆</a>
-    {{ session.username }} <a href="{{ url_for('logout') }}">Log ud</a>
+    {{ session.username }}
   </div>
   <div class="right-buttons">
     <a href="/day">&lt;</a>
