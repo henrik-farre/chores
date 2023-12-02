@@ -81,7 +81,7 @@
             {% for chore in chores %}
                 <tr>
                     <td>{{ chore.id }}</td>
-                    <td>{{ chore.name }}</td>
+                    <td>{% if chore.deleted %}<s>{% endif %}{{ chore.name }}{% if chore.deleted %}</s>{% endif %}</td>
                     <td>{{ chore.price }}</td>
                     <td>{{ chore.bonus_price }}</td>
                     <td>{{ chore.bonus_price_trigger }}</td>
@@ -90,7 +90,11 @@
                     <td>
                         <form action="{{ url_for('admin') }}" method="POST" style="display: inline-block;">
                             <input type="hidden" name="chore_id" value="{{ chore[0] }}">
+                            {% if chore.deleted %}
+                            <button type="submit" name="restore_chore">Restore</button>
+                            {% else %}
                             <button type="submit" name="delete_chore">Delete</button>
+                            {% endif %}
                         </form>
                     </td>
                 </tr>
