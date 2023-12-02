@@ -50,6 +50,7 @@ def initialize_db():
             bonus_price_trigger TEXT,
             interval TEXT NOT NULL,
             work_limit INTEGER,
+            deleted INTEGER DEFAULT 0,
             UNIQUE(name)
         )
     ''')

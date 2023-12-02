@@ -78,7 +78,7 @@ def create_app():
         else:
             selected_date = datetime.strptime(selected_date, "%Y-%m-%d")
 
-        cursor.execute("SELECT * FROM chores")
+        cursor.execute("SELECT * FROM chores WHERE deleted = 0")
         chores = cursor.fetchall()
 
         cursor.execute('''
@@ -315,7 +315,14 @@ def create_app():
                 chore_id = request.form['chore_id']
                 if chore_id:
 
-                    cursor.execute('DELETE FROM chores WHERE id = ?', (chore_id,))
+                    cursor.execute("UPDATE chores SET deleted = 1 WHERE id = ?", (chore_id,))
+                    conn.commit()
+
+            elif 'restore_chore' in request.form:
+                chore_id = request.form['chore_id']
+                if chore_id:
+
+                    cursor.execute("UPDATE chores SET deleted = 0 WHERE id = ?", (chore_id,))
                     conn.commit()
 
             return redirect(url_for('admin'))
